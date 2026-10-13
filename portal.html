@@ -43,7 +43,7 @@ document.getElementById('btnFind').onclick = function () {
     var s = NF.shipments.filter(function (x) { return x.pro === pro; })[0];
     if (!s) { msg.textContent = 'We could not find freight bill ' + pro + '.'; return; }
     var docs = s.pod
-      ? '<li><a id="lnkDeliveryReceipt" href="docs/' + s.pod + '" download>Delivery Receipt (PDF)</a></li>'
+      ? '<li><a id="lnkDeliveryReceipt" href="' + s.pod + '" download>Delivery Receipt (PDF)</a></li>'
       : '<li id="noDocs">No documents available yet.</li>';
     out.innerHTML =
       '<div class="shipcard" id="cardShipment"><h3>Freight bill ' + s.pro + '</h3><div class="kv">' +
