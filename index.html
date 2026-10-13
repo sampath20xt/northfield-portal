@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Northfield Demo Freight | Customer Access</title>
+<link rel="stylesheet" href="nf.css"></head><body>
+<div class="top"><div class="logo">NF</div><div class="name">Northfield Demo Freight</div><div class="right">Customer Access</div></div>
+<div class="panel login">
+<h2 style="margin-top:0;color:#2f6b3a">Log in to your account</h2>
+<div class="field"><label for="customerId">Customer ID</label><input type="text" id="customerId" autocomplete="off"></div>
+<div class="field"><label for="accessCode">Access Code</label><input type="password" id="accessCode"></div>
+<div class="field"><label><input type="checkbox" id="chkRemember"> Keep me signed in</label></div>
+<button class="btn" id="btnLogin">Log in</button>
+<div class="msg" id="loginMsg"></div>
+</div>
+<footer>Fictional carrier portal for automation training. Not a real company.</footer>
+<div id="cookieBanner">This site uses cookies to improve your experience.
+<button class="btn" id="btnAcceptCookies">Accept</button><button class="btn secondary" id="btnDeclineCookies">Decline</button></div>
+<script src="nf.js"></script>
+<script>
+function hideBanner(){ document.getElementById('cookieBanner').classList.add('hidden'); }
+document.getElementById('btnAcceptCookies').onclick = hideBanner;
+document.getElementById('btnDeclineCookies').onclick = hideBanner;
+document.getElementById('btnLogin').onclick = function () {
+  var id = document.getElementById('customerId').value.trim(), code = document.getElementById('accessCode').value;
+  var msg = document.getElementById('loginMsg');
+  if (!document.getElementById('cookieBanner').classList.contains('hidden')) { msg.textContent = 'Please respond to the cookie notice first.'; return; }
+  if (id === NF.user && code === NF.pass) { sessionStorage.setItem('nf_session', id); location.href = 'portal.html'; }
+  else { msg.textContent = 'The Customer ID or Access Code is not correct.'; }
+};
+</script></body></html>

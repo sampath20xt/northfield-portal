@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Northfield Demo Freight | Shipments</title>
+<link rel="stylesheet" href="nf.css"></head><body>
+<div class="top"><div class="logo">NF</div><div class="name">Northfield Demo Freight</div>
+<div class="right">Account <b id="acct"></b> &nbsp; <a href="#" id="lnkLogout">Log out</a></div></div>
+<div class="wrap"><nav>
+<a href="#" id="navDashboard">Dashboard</a><a href="#" id="navShipments">Shipments</a><a href="#" id="navInvoices">Invoices</a><a href="#" id="navSupport">Support</a>
+</nav><div class="content">
+<div id="viewDashboard" class="panel"><h2 style="margin-top:0">Welcome back</h2><p>Use <b>Shipments</b> to look up a freight bill and download delivery receipts.</p></div>
+<div id="viewShipments" class="panel hidden">
+<h2 style="margin-top:0">Shipment lookup</h2>
+<div class="search"><input type="text" id="txtFreightBill" placeholder="Freight bill (PRO) #"><button class="btn" id="btnFind">Find</button></div>
+<div id="loading" class="spinner hidden">Searching, please wait...</div>
+<div class="msg" id="findMsg"></div>
+<div id="shipResult"></div>
+</div>
+<div id="viewInvoices" class="panel hidden"><h2 style="margin-top:0">Invoices</h2><p>Invoices are emailed to your billing contact.</p></div>
+<div id="viewSupport" class="panel hidden"><h2 style="margin-top:0">Support</h2><p>Email ar@northfield.example.com</p></div>
+</div></div>
+<footer>Fictional carrier portal for automation training. Not a real company.</footer>
+<script src="nf.js"></script>
+<script>
+if (!sessionStorage.getItem('nf_session')) { location.href = 'index.html'; }
+document.getElementById('acct').textContent = sessionStorage.getItem('nf_session');
+document.getElementById('lnkLogout').onclick = function () { sessionStorage.removeItem('nf_session'); location.href = 'index.html'; };
+var views = ['Dashboard', 'Shipments', 'Invoices', 'Support'];
+views.forEach(function (v) {
+  document.getElementById('nav' + v).onclick = function (e) {
+    e.preventDefault();
+    views.forEach(function (w) {
+      document.getElementById('view' + w).classList.toggle('hidden', w !== v);
+      document.getElementById('nav' + w).classList.toggle('active', w === v);
+    });
+  };
+});
+document.getElementById('navDashboard').classList.add('active');
+document.getElementById('btnFind').onclick = function () {
+  var pro = document.getElementById('txtFreightBill').value.trim().toUpperCase();
+  var out = document.getElementById('shipResult'), msg = document.getElementById('findMsg'), ld = document.getElementById('loading');
+  out.innerHTML = ''; msg.textContent = ''; ld.classList.remove('hidden');
+  setTimeout(function () {            // simulated server delay (robot must wait)
+    ld.classList.add('hidden');
+    var s = NF.shipments.filter(function (x) { return x.pro === pro; })[0];
+    if (!s) { msg.textContent = 'We could not find freight bill ' + pro + '.'; return; }
+    var docs = s.pod
+      ? '<li><a id="lnkDeliveryReceipt" href="docs/' + s.pod + '" download>Delivery Receipt (PDF)</a></li>'
+      : '<li id="noDocs">No documents available yet.</li>';
+    out.innerHTML =
+      '<div class="shipcard" id="cardShipment"><h3>Freight bill ' + s.pro + '</h3><div class="kv">' +
+      '<div>Current status</div><div id="valStatus">' + s.status + '</div>' +
+      '<div>Customer reference</div><div>' + s.ref + '</div>' +
+      '<div>Lane</div><div>' + s.origin + ' to ' + s.dest + '</div>' +
+      '<div>Shipped</div><div>' + s.pickup + '</div>' +
+      '<div>Delivered</div><div id="valDelivered">' + s.delivery + '</div>' +
+      '<div>Check-in / Check-out</div><div id="valCheckInOut">' + (s.arrive ? s.arrive + ' / ' + s.depart : '') + '</div>' +
+      '<div>Signed by</div><div>' + s.receivedBy + '</div></div>' +
+      '<div class="docs"><b>Documents</b><ul>' + docs + '</ul></div></div>';
+  }, 1800);
+};
+</script></body></html>
